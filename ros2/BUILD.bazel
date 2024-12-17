@@ -1,6 +1,8 @@
 """ ROS 2 common definitions.
 """
 
+load("@bazel_skylib//lib:selects.bzl", "selects")
+load("@bazel_skylib//rules:common_settings.bzl", "string_flag")
 load("@rules_cc//cc:defs.bzl", "cc_library")
 load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 load("@rules_python//python:pip.bzl", "whl_filegroup")
@@ -80,4 +82,25 @@ cc_library(
     includes = ["numpy_includes/numpy/core/include"],
     visibility = ["//visibility:public"],
     deps = ["@rules_python//python/cc:current_py_cc_headers"],
+)
+
+string_flag(
+    name = "dds_vendor",
+    build_setting_default = "cyclonedds",
+    values = [
+        "cyclonedds",
+        "fastdds",
+    ],
+)
+
+config_setting(
+    name = "use_cyclonedds",
+    flag_values = {":dds_vendor": "cyclonedds"},
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+    name = "use_fastdds_dynamic",
+    flag_values = {":dds_vendor": "fastdds"},
+    visibility = ["//visibility:public"],
 )
